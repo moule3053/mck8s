@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcs
+  template:
+    metadata:
+      labels:
+        app: mcs
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: virtual-158-4-2
+      tolerations:
+      - key: "node-role.kubernetes.io/master"
+        operator: "Equal"
+        effect: "NoSchedule"
+      serviceAccountName: rbac-mck8s
+      containers:
+      - image: eu.gcr.io/inlaid-index-271509/fogscheduler
+        name: mcs
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /root/.kube/config
+          name: kube-config
+        resources:
+          requests:
+            cpu: 1
+            memory: 1024Mi
+      volumes:
+      - name: kube-config
+        hostPath:
+          path: /root/.kube/config
+          type: File
+

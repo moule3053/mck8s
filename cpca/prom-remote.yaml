@@ -1,0 +1,5 @@
+prometheus:
+ prometheusSpec:
+   remoteWrite:
+   - url: "http://10.158.4.2:8086/api/v1/prom/write?db=cloud_prometheus"
+   - url: "http://10.158.4.2:8428/api/v1/write"
