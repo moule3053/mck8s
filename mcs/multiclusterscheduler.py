@@ -30,8 +30,9 @@ def create_fn(body, spec, patch, **kwargs):
         placement_policy = spec['placementPolicy']
     else: # Default placement policy is most_traffic
         placement_policy = 'most_traffic'
-
-    if 'locations' not in spec:
+    
+    # Placement policy when preferred location is specified
+    if 'locations' in spec:
         placement_policy = 'cluster_affinity'
 
     print("The provided placement policy is ..........", placement_policy)
