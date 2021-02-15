@@ -823,7 +823,7 @@ def update_fn(spec, status, namespace, logger, patch, **kwargs):
     return {'fogapp_name': fogapp_name, 'fogapp_replicas': eligible_replicas,
             'fogapp_locations': eligible_clusters, 'fogapp_status': 'provisioned'}
 
-# Delete fog application, thus delete the associated FederatedNamespace, FederatedDeployment, and FederatedService
+# Delete fog application, thus delete the associated deployments
 @kopf.on.delete('fogguru.eu', 'v1', 'multiclusterdeployments')
 def delete(spec, body, status, **kwargs):
     fogapp_name = body['metadata']['name']
@@ -1147,10 +1147,8 @@ def create_fn(body, spec, patch, **kwargs):
 
             for cluster in possible_clusters:
                 replicas = int(override_replicas_new[cluster])
-                # is_eligible = checkClusterEligibility(cluster, app_cpu_request, app_memory_request, replicas)
                 # The maximum number of replicas the cluster can host
                 maximum_replicas = getMaximumReplicas(cluster, fogapp_cpu_request, fogapp_memory_request)
-                #maximum_replicas = getAllocatableCapacity(cluster, fogapp_cpu_request, fogapp_memory_request)
                 if maximum_replicas > replicas:
                     dict = {}
                     dict['name'] = cluster
