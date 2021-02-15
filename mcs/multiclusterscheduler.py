@@ -380,10 +380,6 @@ def create_fn(body, spec, patch, **kwargs):
     dict['replicas'] = eligible_replicas
     patch.status['message'] = dict
 
-    timestamp = time.time()
-    request_log = pd.DataFrame([{'timestamp': timestamp, 'mcd_name': fogapp_name, 'mcd_original_location': fogapp_locations, 'mcd_current_location': eligible_clusters, 'mcd_replicas': eligible_replicas}])
-    request_log.to_csv(log_file_name, mode='a', header=False)
-
     # TO DO: per cluster overrides
     return {'fogapp_name': fogapp_name, 'input_clusters': fogapp_locations, 'input_replicas': fogapp_replicas, 'fogapp_replicas': eligible_replicas, 'fogapp_locations': eligible_clusters, 'fogapp_status': 'provisioned'}
 
@@ -958,10 +954,6 @@ def delete_fn(body, spec, patch, **kwargs):
 # Multi Cluster Job
 @kopf.on.create('fogguru.eu', 'v1', 'multiclusterjobs')
 def create_fn(body, spec, patch, **kwargs):
-    request_log_colnames = ['timestamp', 'mcj_name', 'original_location', 'current_location', 'replicas']
-    request_log = pd.DataFrame(columns=request_log_colnames)
-    log_file_name = 'multiclusterjob_cloud_hpa_logs_2_130221.csv'
-
     # Get info from multiclusterjobs object
     fogapp_name = body['metadata']['name']
     fogapp_image = spec['template']['spec']['containers'][0]['image']
@@ -1319,10 +1311,6 @@ def create_fn(body, spec, patch, **kwargs):
     dict['message'] = 'provisioned'
     dict['replicas'] = eligible_replicas
     patch.status['message'] = dict
-
-    timestamp = time.time()
-    request_log = pd.DataFrame([{'timestamp': timestamp, 'mcd_name': fogapp_name, 'mcd_original_location': fogapp_locations, 'mcd_current_location': eligible_clusters, 'mcd_replicas': eligible_replicas}])
-    request_log.to_csv(log_file_name, mode='a', header=False)
 
     # TO DO: per cluster overrides
     return {'fogapp_name': fogapp_name, 'input_clusters': fogapp_locations, 'input_replicas': fogapp_replicas, 'fogapp_replicas': eligible_replicas, 'fogapp_locations': eligible_clusters, 'fogapp_status': 'provisioned'}

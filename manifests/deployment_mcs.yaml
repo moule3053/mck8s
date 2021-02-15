@@ -12,15 +12,15 @@ spec:
       labels:
         app: mcs
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: virtual-158-4-2
-      tolerations:
-      - key: "node-role.kubernetes.io/master"
-        operator: "Equal"
-        effect: "NoSchedule"
+      #nodeSelector:
+      #  kubernetes.io/hostname: virtual-158-4-2
+      #tolerations:
+      #- key: "node-role.kubernetes.io/master"
+      #  operator: "Equal"
+      #  effect: "NoSchedule"
       serviceAccountName: rbac-mck8s
       containers:
-      - image: eu.gcr.io/inlaid-index-271509/fogscheduler
+      - image: moule3053/multiclusterscheduler
         name: mcs
         imagePullPolicy: Always
         volumeMounts:
@@ -33,6 +33,6 @@ spec:
       volumes:
       - name: kube-config
         hostPath:
-          path: /root/.kube/config
+          path: /home/fogguru/.kube/config
           type: File
 
