@@ -81,6 +81,7 @@ def findEligibleClusters(fogapp_locations, possible_clusters, override_replicas_
     eligible_clusters = []
     for cluster in possible_clusters:
         replicas = int(override_replicas_new[cluster])
+        # is_eligible = checkClusterEligibility(cluster, app_cpu_request, app_memory_request, replicas)
         # The maximum number of replicas the cluster can host
         maximum_replicas = getMaximumReplicas(cluster, fogapp_cpu_request, fogapp_memory_request)
         if maximum_replicas > replicas:
@@ -125,6 +126,9 @@ def findEligibleClusters(fogapp_locations, possible_clusters, override_replicas_
         if overflow > 0:
             nearest_clusters = findNearestClusters(cluster, temp_list_3)
             print("List of nearest clusters ....", nearest_clusters)
+        # else:
+        #     print("The cluster doesn't have overflow ....")
+        #     break
 
         # Distribute overflow to nearest clusters
         if len(nearest_clusters) > 0:
@@ -191,9 +195,9 @@ def checkClusterEligibility(cluster, app_cpu_request, app_memory_request, replic
     else:
         return False
 
-def getAllocatableCapacity(cluster, app_cpu_request, app_memory_request, app_name):
+def getAllocatableCapacity(cluster, app_cpu_request, app_memory_request, app_name, app_namespace):
     print("Compute allocatable capacity ..............")
-    allocatable_capacity_per_node = computeAllocatableCapacity(cluster, app_name)
+    allocatable_capacity_per_node = computeAllocatableCapacity(cluster, app_name, app_namespace)
 
     count = 0
 
@@ -214,7 +218,7 @@ def getMaximumReplicas(cluster, app_cpu_request, app_memory_request):
 
     return count
 
-def computeAllocatableCapacity(cluster, app_name):
+def computeAllocatableCapacity(cluster, app_name, namespace):
     total_allocatable_cpu = 0
     total_allocatable_memory = 0
 
@@ -252,12 +256,12 @@ def computeAllocatableCapacity(cluster, app_name):
             node_cpu_request_all += sum(cpureqs)
             node_memory_request_all += sum(memreqs)
 
-            # Calculate for default ns
+            # Calculate for the namespace
             node_cpu_request_default = 0
             node_memory_request_default = 0
 
-            # Get pods of default ns
-            pods = core_v1.list_namespaced_pod(namespace='default', limit=max_pods,
+            # Get pods in the namespace
+            pods = core_v1.list_namespaced_pod(namespace=namespace, limit=max_pods,
                                                field_selector=field_selector).items
             cpureqs, memreqs = [], []
             for pod in pods:
@@ -271,12 +275,12 @@ def computeAllocatableCapacity(cluster, app_name):
             node_memory_request_default += sum(memreqs)
 
             # Exclude the resource request of other apps in the default namespace
-            # Calculate for default ns other apps
+            # Calculate for the namespace other apps
             node_cpu_request_default_other = 0
             node_memory_request_default_other = 0
 
             # Get pods of default ns
-            pods = core_v1.list_namespaced_pod(namespace='default', limit=max_pods,
+            pods = core_v1.list_namespaced_pod(namespace=namespace, limit=max_pods,
                                                field_selector=field_selector).items
             cpureqs, memreqs = [], []
             for pod in pods:
@@ -369,7 +373,6 @@ def getPerNodeResources(cluster):
 
     perNodeCPU = 0
     perNodeMemory = 0
-
 
     client_cluster = client.CoreV1Api(api_client=config.new_client_from_config(context=cluster))
 
@@ -492,6 +495,7 @@ def getFogAppLocationsByResource(clusters_qty):
 def getControllerMasterIP():
     # TO DO: Specify cluster 0
     config.load_kube_config()
+    #api = client.CoreV1Api(api_client=config.new_client_from_config(context="cluster0"))
     api = client.CoreV1Api()
     master_ip = ""
     try:
@@ -507,7 +511,7 @@ def getControllerMasterIP():
 
     return master_ip
 
-def getFogAppLocations(app_name, app_cpu_request, app_memory_request, replicas, clusters_qty, placement_policy, mode):
+def getFogAppLocations(app_name, app_namespace, app_cpu_request, app_memory_request, replicas, clusters_qty, placement_policy, mode):
     master_ip = getControllerMasterIP()
     prom_host = os.getenv("PROMETHEUS_DEMO_SERVICE_SERVICE_HOST", master_ip)
     prom_port = os.getenv("PROMETHEUS_DEMO_SERVICE_SERVICE_PORT", "30090")
@@ -547,7 +551,7 @@ def getFogAppLocations(app_name, app_cpu_request, app_memory_request, replicas, 
             if mode == 'create':
                 maximum_replicas = getMaximumReplicas(cluster, app_cpu_request, app_memory_request)
             elif mode == 'update':
-                maximum_replicas = getAllocatableCapacity(cluster, app_cpu_request, app_memory_request, app_name)
+                maximum_replicas = getAllocatableCapacity(cluster, app_cpu_request, app_memory_request, app_name, app_namespace)
 
             if maximum_replicas > 0:
                 dict = {}
@@ -576,7 +580,7 @@ def getFogAppLocations(app_name, app_cpu_request, app_memory_request, replicas, 
                 if mode == 'create':
                     query = "sum(instance:node_network_receive_bytes_excluding_lo:rate1m{cluster_name='" + cluster['name'] + "'})"
                 elif mode == 'update':
-                    query = "sum(irate(container_network_receive_bytes_total{cluster_name='" + cluster['name'] + "', namespace='default', pod=~'frontend.*'}[60s]))"
+                    query = "sum(irate(container_network_receive_bytes_total{cluster_name='" + cluster['name'] + "', namespace='" + app_namespace + "', pod=~'frontend.*'}[60s]))"
 
                 # Here, we are fetching the values of a particular metric name
                 result = pc.custom_query(query=query)
@@ -587,6 +591,9 @@ def getFogAppLocations(app_name, app_cpu_request, app_memory_request, replicas, 
                 else:
                     cluster['ntk_rcv'] = 0.0
 
+            # sorted_dict = dict(sorted(cluster_network_receive.items(),
+            #                           key=operator.itemgetter(1),
+            #                           reverse=True))
 
             sorted_eligible_clusters = sorted(eligible_clusters, key = lambda i: i['ntk_rcv'], reverse=True)
         elif placement_policy == 'worst_fit' or placement_policy == 'worst-fit':
@@ -604,8 +611,12 @@ def getFogAppLocations(app_name, app_cpu_request, app_memory_request, replicas, 
             dict['max_replicas'] = cluster['max_replicas']
             fogapp_locations.append(dict)
 
+        # for key in sorted_dict:
+        #     fogapp_locations.append(key)
 
         all_clusters = get_all_federation_clusters()
+        # if 'cloud' in all_clusters:
+        #     fogapp_locations.append('cloud')
         for cluster in all_clusters:
             if 'cloud' in cluster:
                 dict = {}
@@ -618,29 +629,13 @@ def getFogAppLocations(app_name, app_cpu_request, app_memory_request, replicas, 
         #fogapp_locations = fogapp_locations[:clusters_qty]
         return fogapp_locations
 
-def getFogApp(namespace):
+def getFogAppClusters(name, namespace):
     config.load_kube_config()
     api = client.CustomObjectsApi()
 
     group = 'fogguru.eu'
     version = 'v1'
     namespace = namespace
-    plural = 'multiclusterdeployments'
-
-    api_response = ""
-    try:
-        api_response = api.list_namespaced_custom_object(group=group, version=version, namespace=namespace, plural=plural, _request_timeout=timeout)
-    except:
-        print("Connection timeout after " + str(timeout) + " seconds to host cluster")
-    return api_response
-
-def getFogAppClusters(name):
-    config.load_kube_config()
-    api = client.CustomObjectsApi()
-
-    group = 'fogguru.eu'
-    version = 'v1'
-    namespace = 'default'
     plural = 'multiclusterdeployments'
 
     current_clusters = []
@@ -658,13 +653,13 @@ def getFogAppClusters(name):
 
     return current_clusters, original_clusters
 
-def getServiceClusters(name):
+def getServiceClusters(name, namespace):
     config.load_kube_config()
     api = client.CustomObjectsApi()
 
     group = 'fogguru.eu'
     version = 'v1'
-    namespace = 'default'
+    namespace = namespace
     plural = 'multiclusterservices'
 
     current_clusters = []
@@ -693,67 +688,67 @@ def getCloudCluster():
             cloud_cluster = cluster
     return cloud_cluster
 
-def createDeployment(cluster, deployment_body):
+def createDeployment(cluster, deployment_body, namespace):
     core_v1 = client.AppsV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.create_namespaced_deployment(namespace='default', body=deployment_body, _request_timeout=timeout)
+        core_v1.create_namespaced_deployment(namespace=namespace, body=deployment_body, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when creating Deployment on " + cluster )
 
 
-def createService(cluster, service_body):
+def createService(cluster, service_body, namespace):
     core_v1 = client.CoreV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.create_namespaced_service(namespace='default', body=service_body, _request_timeout=timeout)
+        core_v1.create_namespaced_service(namespace=namespace, body=service_body, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when creating Service on " + cluster)
 
-def deleteDeployment(cluster, deployment_name):
+def deleteDeployment(cluster, deployment_name, namespace):
     core_v1 = client.AppsV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.delete_namespaced_deployment(namespace='default', name=deployment_name, _request_timeout=timeout)
+        core_v1.delete_namespaced_deployment(namespace=namespace, name=deployment_name, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when deleting Deployment from " + cluster)
 
-def deleteService(cluster, service_name):
+def deleteService(cluster, service_name, namespace):
     core_v1 = client.CoreV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.delete_namespaced_service(namespace='default', name=service_name, _request_timeout=timeout)
+        core_v1.delete_namespaced_service(namespace=namespace, name=service_name, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when deleting Service from " + cluster)
 
-def patchDeployment(cluster, deployment_name, deployment_body):
+def patchDeployment(cluster, deployment_name, deployment_body, namespace):
     core_v1 = client.AppsV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.patch_namespaced_deployment(namespace='default', name=deployment_name, body=deployment_body, _request_timeout=timeout)
+        core_v1.patch_namespaced_deployment(namespace=namespace, name=deployment_name, body=deployment_body, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when patching Deployment on " + cluster)
 
 
-def patchService(cluster, service_name, service_body):
+def patchService(cluster, service_name, service_body, namespace):
     core_v1 = client.CoreV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.patch_namespaced_service(namespace='default', name=service_name, body=service_body, _request_timeout=timeout)
+        core_v1.patch_namespaced_service(namespace=namespace, name=service_name, body=service_body, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when patching Service on " + cluster)
 
-def createJob(cluster, job_body):
+def createJob(cluster, job_body, namespace):
     core_v1 = client.BatchV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.create_namespaced_job(namespace='default', body=job_body, _request_timeout=timeout)
+        core_v1.create_namespaced_job(namespace=namespace, body=job_body, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when creating Job on " + cluster)
 
-def patchJob(cluster, fogapp_name, job_body):
+def patchJob(cluster, fogapp_name, job_body, namespace):
     core_v1 = client.BatchV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.patch_namespaced_job(namespace='default', name=fogapp_name, body=job_body, _request_timeout=timeout)
+        core_v1.patch_namespaced_job(namespace=namespace, name=fogapp_name, body=job_body, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when patching Job on " + cluster)
 
-def deleteJob(cluster, fogapp_name):
+def deleteJob(cluster, fogapp_name, namespace):
     core_v1 = client.BatchV1Api(api_client=config.new_client_from_config(context=cluster))
     try:
-        core_v1.delete_namespaced_job(namespace='default', name=fogapp_name, _request_timeout=timeout)
+        core_v1.delete_namespaced_job(namespace=namespace, name=fogapp_name, _request_timeout=timeout)
     except:
         print("Connection timeout after " + str(timeout) + " seconds when deleting Job from " + cluster)
