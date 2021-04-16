@@ -4,4 +4,4 @@
 
 The figure below shows the architecture of mck8s.
 
-<p align="center"><img src="docs/images/mck8s_architecture.pdf" width="711"></p>
+<p align="center"><img src="docs/images/mck8s_architecture.pdf" type="application/pdf" width="711"></p>
