@@ -13,7 +13,7 @@ The figure below shows the architecture of mck8s.
 ## Pre-requisites
 
 - A Kubernetes cluster to act as the mck8s management cluster. Since mck8s components need access to the Kubernetes control plane, managed Kubernetes offerings such as GKE are not supported at the moment.
-- A number of Kubernetes clusters to be managed by the management cluster and on which workloads run.
+- A number of Kubernetes clusters to be managed by the management cluster and on which workloads run. We assume that you have administrative access to all these clusters and the Kubernetes `kubeconfig` files of all clusters are available.
 - If traffic routing between clusters is desired, it is recommended to deploy [Cilium Cluster Mesh] on the workload clusters with distinct Pod CIDRs.
 - If proximity-aware placement is desired, [serf] should be deployed on at least one node of each workload cluster.
 - If cloud provisioning and autoscaling ia desired, cloud credentials are required. For now, we support OpenStack clusters.
