@@ -33,6 +33,8 @@ The figure below shows the architecture of mck8s.
 # Deploy the CRDs on the management cluster
 
 1. Switch to the `cluster0` context to be able to deploy the `CRDs` on the management cluster.
+
+
 `kubectl config use-context cluster0`
 2. 
 
