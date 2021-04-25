@@ -20,7 +20,7 @@ The figure below shows the architecture of mck8s.
 
 ## Steps
 
-# Prepare
+### Prepare
 
 1. Clone this repository to your computer.
 2. Copy the `kubeconfig` file of the `management cluster` as `cluster0` in `~/.kube/` directory of your computer .
@@ -30,7 +30,7 @@ The figure below shows the architecture of mck8s.
 6. Run the `prepare.sh` script, which sets up Kubernetes Federation, Prometheus Operator, and Cilium. This script assumes that there are five `workload clusters`, `cluster1` to `cluster5`. If you have a different number of `workload clusters`, please adjust the script accordingly.
 7. Copy the `~/.kube/config` file to the `~/.kube/` directory of the `master node` of the `management cluster`.
 
-# Deploy the CRDs on the management cluster
+### Deploy the CRDs on the management cluster
 
 1. Switch to the `cluster0` context to be able to deploy the `CRDs` on the management cluster.
     
@@ -44,7 +44,7 @@ The figure below shows the architecture of mck8s.
     
     `kubectl apply -f manifests/crds/`
     
-# Buid Docker images of the controllers
+### Buid Docker images of the controllers
 
 1. Buid the image of the `Multi Cluster Scheduler`
 
@@ -62,7 +62,21 @@ The figure below shows the architecture of mck8s.
 
     `cd multi-cluster-rescheduler && docker build -t REPO_NAME/IMAGE_NAME .`
 
-## Workload clusters
+### Deploy the controller Deployments on the `management cluster`
+
+NOTE: The pods of these controllers are going to be scheduled on the master node of the `management cluster`. In the manifest files below, Replace the `MASTER_NODE_HOST_NAME`, `REPO_NAME/IMAGE_NAME`, and `/PATH/TO/HOME/DIRECTORY/` accordingly before running the following.
+
+1. Deploy the `Multi Cluster Scheduler` Deployment
+
+    `kubectl apply -f manifests/controllers/01_deployment_multi_cluster_scheduler.yaml`
+    
+2. Deploy the `Multi Cluster HPA` Deployment
+
+    `kubectl apply -f manifests/controllers/02_deployment_multi_cluster_hpa.yaml`   
+    
+3. Deploy the `Cloud Provisioner and Cluster Autoscaler` Deployment
+
+    `kubectl apply -f manifests/controllers/03_deployment_cloud_provisioner_cluster_autoscaler.yaml`   
 
 [Kubernetes]: https://github.com/kubernetes/kubernetes
 [Kubernetes Federation]: https://github.com/kubernetes-sigs/kubefed
