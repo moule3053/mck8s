@@ -20,7 +20,7 @@ spec:
         effect: "NoSchedule"
       serviceAccountName: rbac-mck8s
       containers:
-      - image: CLOUD_PROVISIONER_IMAGE
+      - image: REPO_NAME/CLOUD_PROVISIONER_IMAGE
         name: cloud-provisioner
         imagePullPolicy: Always
         volumeMounts:
