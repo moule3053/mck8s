@@ -20,7 +20,7 @@ spec:
         effect: "NoSchedule"
       serviceAccountName: rbac-mck8s
       containers:
-      - image: MCS_IMAGE
+      - image: REPO_NAME/MCS_IMAGE
         name: mcs
         imagePullPolicy: Always
         volumeMounts:
