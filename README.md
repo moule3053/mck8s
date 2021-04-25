@@ -33,13 +33,34 @@ The figure below shows the architecture of mck8s.
 # Deploy the CRDs on the management cluster
 
 1. Switch to the `cluster0` context to be able to deploy the `CRDs` on the management cluster.
+    
     `kubectl config use-context cluster0`
 
 2. Create the `RBAC` required
+    
     `kubectl apply -f manifests/crds/01_rbac_mck8s.yaml`
   
 3. Deploy the `CRDs`
+    
     `kubectl apply -f manifests/crds/`
+    
+# Buid Docker images of the controllers
+
+1. Buid the image of the `Multi Cluster Scheduler`
+
+    `cd multi-cluster-scheduler && docker build -t REPO_NAME/IMAGE_NAME .`
+    
+2. Build the image of the `Multi Cluster HPA`
+
+    `cd multi-cluster-horizontal-pod-autoscaler && docker build -t REPO_NAME/IMAGE_NAME .`
+    
+3. Build the image of the `Cloud Provisioner and Cluster Autoscaler`
+
+    `cd cloud-cluster-provisioner-autoscaler && docker build -t REPO_NAME/IMAGE_NAME .`
+    
+4. Build the image of the `Deployment Rescheduler`
+
+    `cd multi-cluster-rescheduler && docker build -t REPO_NAME/IMAGE_NAME .`
 
 ## Workload clusters
 
