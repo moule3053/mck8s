@@ -18,7 +18,13 @@ The figure below shows the architecture of mck8s.
 - If proximity-aware placement is desired, [serf] should be deployed on at least one node of each workload cluster.
 - If cloud provisioning and autoscaling ia desired, cloud credentials are required. For now, we support OpenStack clusters.
 
-## More to come ...
+## Steps
+
+1. Clone this repository to your computer.
+2. Copy the `kubeconfig` file of the `management cluster` as `cluster0` in `~/.kube/` directory of your computer .
+3. Copy the `kubeconfig` files from the `workload clusters` to `~/.kube/` directory of your computer and rename these files as per their cluster names such as `cluster1`, `cluster2`, or `cluster3`, .....
+4. Make sure that the `cluster`, `context`, and `user` names is these files are distinct from each other.
+5. Run the `prepare.sh` script, which sets up Kubernetes Federation, Prometheus Operator, and Cilium. This script assumes that there are five `workload clusters`, `cluster1` to `cluster5`. If you have a different number of `workload clusters`, please adjust the script accordingly.
 
 ## Workload clusters
 
