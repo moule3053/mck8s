@@ -20,11 +20,21 @@ The figure below shows the architecture of mck8s.
 
 ## Steps
 
+# Prepare
+
 1. Clone this repository to your computer.
 2. Copy the `kubeconfig` file of the `management cluster` as `cluster0` in `~/.kube/` directory of your computer .
 3. Copy the `kubeconfig` files from the `workload clusters` to `~/.kube/` directory of your computer and rename these files as per their cluster names such as `cluster1`, `cluster2`, or `cluster3`, .....
 4. Make sure that the `cluster`, `context`, and `user` names is these files are distinct from each other.
-5. Run the `prepare.sh` script, which sets up Kubernetes Federation, Prometheus Operator, and Cilium. This script assumes that there are five `workload clusters`, `cluster1` to `cluster5`. If you have a different number of `workload clusters`, please adjust the script accordingly.
+5. Before running `prepare.sh`, which assumes that there are five `workload clusters`, `cluster1` to `cluster5`, edit the `values.yaml` file as per the number of your `workload clusters` and enter the IP addresses of the master nodes of your clusters.
+6. Run the `prepare.sh` script, which sets up Kubernetes Federation, Prometheus Operator, and Cilium. This script assumes that there are five `workload clusters`, `cluster1` to `cluster5`. If you have a different number of `workload clusters`, please adjust the script accordingly.
+7. Copy the `~/.kube/config` file to the `~/.kube/` directory of the `master node` of the `management cluster`.
+
+# Deploy the CRDs on the management cluster
+
+1. Switch to the `cluster0` context to be able to deploy the `CRDs` on the management cluster.
+`kubectl config use-context cluster0`
+2. 
 
 ## Workload clusters
 
