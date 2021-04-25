@@ -1,0 +1,40 @@
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigs:
+      - job_name: 'agg-prom'
+        scrape_interval: 15s
+        metrics_path: /federate
+        honor_labels: true
+        scheme: http
+        params:
+          match[]:
+            - '{__name__=~"job:.*"}'
+            - '{job="prometheus"}'
+            - '{job="kubernetes-nodes"}'
+            - '{job="kubernetes-cadvisor"}'
+            - '{name=~".+"}'
+            - '{job="kubernetes-service-endpoints"}'
+            - '{job="kubernetes-pods"}'
+            - '{job="kubernetes-apiservers"}'
+            - '{pod_name=".+"}'
+            - '{namespace="global"}'
+            - '{job="node-exporter"}'
+        static_configs:
+          - targets: [CLUSTER1_MASTER_IP:30090]
+            labels:
+              cluster_name: cluster1
+          - targets: [CLUSTER2_MASTER_IP:30090]
+            labels:
+              cluster_name: cluster2
+          - targets: [CLUSTER3_MASTER_IP:30090]
+            labels:
+              cluster_name: cluster3
+          - targets: [CLUSTER4_MASTER_IP:30090]
+            labels:
+              cluster_name: cluster4
+          - targets: [CLUSTER5_MASTER_IP:30090]
+            labels:
+              cluster_name: cluster5              
+        tls_config:
+          insecure_skip_verify: true
+
