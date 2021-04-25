@@ -20,7 +20,7 @@ spec:
         effect: "NoSchedule"
       serviceAccountName: rbac-mck8s
       containers:
-      - image: MCHPA_IMAGE
+      - image: REPO_NAME/MCHPA_IMAGE
         name: mchpa
         imagePullPolicy: Always
         volumeMounts:
