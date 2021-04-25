@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-provisioner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-provisioner
+  template:
+    metadata:
+      labels:
+        app: cloud-provisioner
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: MASTER_NODE_HOST_NAME
+      tolerations:
+      - key: "node-role.kubernetes.io/master"
+        operator: "Equal"
+        effect: "NoSchedule"
+      serviceAccountName: rbac-mck8s
+      containers:
+      - image: CLOUD_PROVISIONER_IMAGE
+        name: cloud-provisioner
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /root/.kube/config
+          name: kube-config
+        #resources:
+        #  requests:
+        #    cpu: 1000m
+        #    memory: 1024Mi
+      volumes:
+      - name: kube-config
+        hostPath:
+          path: /PATH/TO/HOME/DIRECTORY/.kube/config
+          type: File
+
