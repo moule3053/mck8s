@@ -76,7 +76,11 @@ NOTE: The pods of these controllers are going to be scheduled on the master node
     
 3. Deploy the `Cloud Provisioner and Cluster Autoscaler` Deployment
 
-    `kubectl apply -f manifests/controllers/03_deployment_cloud_provisioner_cluster_autoscaler.yaml`   
+    `kubectl apply -f manifests/controllers/03_deployment_cloud_provisioner_cluster_autoscaler.yaml`
+    
+# Related Publications
+--------------------
+[1] Mulugeta Tamiru, Guillaume Pierre, Johan Tordsson, Erik Elmroth. mck8s: An orchestration platform for geo-distributed multi-cluster environments. ICCCN 2021 - 30th International Conference on Computer Communications and Networks, Jul 2021, Athens, Greece. pp.1-12. ([pdf](https://hal.inria.fr/hal-03205743/document))    
 
 [Kubernetes]: https://github.com/kubernetes/kubernetes
 [Kubernetes Federation]: https://github.com/kubernetes-sigs/kubefed
