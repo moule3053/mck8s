@@ -78,12 +78,6 @@ NOTE: The pods of these controllers are going to be scheduled on the master node
 
     `kubectl apply -f manifests/controllers/03_deployment_cloud_provisioner_cluster_autoscaler.yaml`
     
-### Demo
-
-Demo video test.
-
-![Demo](docs/images/demo.svg)    
-    
 # Related Publications
 
 [1] Mulugeta Tamiru, Guillaume Pierre, Johan Tordsson, Erik Elmroth. mck8s: An orchestration platform for geo-distributed multi-cluster environments. ICCCN 2021 - 30th International Conference on Computer Communications and Networks, Jul 2021, Athens, Greece. pp.1-12. ([pdf](https://hal.inria.fr/hal-03205743/document))    
