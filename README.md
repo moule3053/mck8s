@@ -78,12 +78,17 @@ NOTE: The pods of these controllers are going to be scheduled on the master node
 
     `kubectl apply -f manifests/controllers/03_deployment_cloud_provisioner_cluster_autoscaler.yaml`
     
-### Demo
+### Demo: Deployment of mck8s CRDs, controllers, multicluster scheduler, and example multicluster deployment
 
 Let's see a demo of how to deploy the multiclusterscheduler, a sample multiclusterdeployment and a multiclusterservice.
 
 <a href="https://asciinema.org/a/414998?autoplay=1"><img src="docs/images/asciinema_icon.png" width="836"/></a>
 
+### Demo: Inter-cluster traffic routing
+
+In this demo, we show how to access a back-end application deployed on cluster3 via a front-end application deployed on cluster2.
+
+<a href="https://asciinema.org/a/415001?autoplay=1"><img src="docs/images/asciinema_icon.png" width="836"/></a>
 
 # Related Publications
 
