@@ -20,7 +20,7 @@ spec:
         effect: "NoSchedule"
       serviceAccountName: rbac-mck8s
       containers:
-      - image: moule3053/multiclusterscheduler:lastest
+      - image: moule3053/multiclusterscheduler:latest
         name: mcs
         imagePullPolicy: Always
         volumeMounts:
