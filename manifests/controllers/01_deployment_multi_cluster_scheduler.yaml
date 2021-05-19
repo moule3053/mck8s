@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mcs
+  name: multiclusterscheduler
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mcs
+      app: multiclusterscheduler
   template:
     metadata:
       labels:
-        app: mcs
+        app: multiclusterscheduler
     spec:
       nodeSelector:
         kubernetes.io/hostname: "virtual-158-4-2"
