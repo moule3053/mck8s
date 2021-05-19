@@ -13,14 +13,14 @@ spec:
         app: mcs
     spec:
       nodeSelector:
-        kubernetes.io/hostname: MASTER_NODE_HOST_NAME
+        kubernetes.io/hostname: "virtual-158-4-2"
       tolerations:
       - key: "node-role.kubernetes.io/master"
         operator: "Equal"
         effect: "NoSchedule"
       serviceAccountName: rbac-mck8s
       containers:
-      - image: REPO_NAME/MCS_IMAGE
+      - image: moule3053/multiclusterscheduler:lastest
         name: mcs
         imagePullPolicy: Always
         volumeMounts:
@@ -33,6 +33,6 @@ spec:
       volumes:
       - name: kube-config
         hostPath:
-          path: /path/to/home/directory/.kube/config
+          path: /root/.kube/config
           type: File
 
