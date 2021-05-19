@@ -6,7 +6,7 @@ mck8s, short for multi-cluster Kubernetes, allows you to automate the deployment
 
 The figure below shows the architecture of mck8s.
 
-<p align="center"><img src="docs/images/mck8s_architecture.png" width="711"></p>
+<p align="center"><img src="docs/images/mck8s_architecture.png" width="500"></p>
 
 # Quick start
 
