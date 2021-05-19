@@ -84,8 +84,6 @@ Let's see a demo of how to deploy the multiclusterscheduler, a sample multiclust
 
 ![Demo](docs/images/demo.svg)
 
-<p align="center"><img src="docs/images/demo.svg" height="500"></p>
-    
 # Related Publications
 
 [1] Mulugeta Tamiru, Guillaume Pierre, Johan Tordsson, Erik Elmroth. mck8s: An orchestration platform for geo-distributed multi-cluster environments. ICCCN 2021 - 30th International Conference on Computer Communications and Networks, Jul 2021, Athens, Greece. pp.1-12. ([pdf](https://hal.inria.fr/hal-03205743/document))    
