@@ -82,7 +82,8 @@ NOTE: The pods of these controllers are going to be scheduled on the master node
 
 Let's see a demo of how to deploy the multiclusterscheduler, a sample multiclusterdeployment and a multiclusterservice.
 
-<a href="https://asciinema.org/a/414998"><img src="https://asciinema.org/a/414998.png" width="836" height="500"/></a>
+<a href="https://asciinema.org/a/414998?autoplay=1"><img src="https://asciinema.org/a/414998.png" width="836"/></a>
+
 
 # Related Publications
 
