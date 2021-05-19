@@ -84,7 +84,7 @@ Let's see a demo of how to deploy the multiclusterscheduler, a sample multiclust
 
 ![Demo](docs/images/demo.svg)
 
-<p align="center"><img src="docs/images/demo.svg" width="500" height="500"></p>
+<p align="center"><img src="docs/images/demo.svg" height="500"></p>
     
 # Related Publications
 
