@@ -1,0 +1,33 @@
+apiVersion: fogguru.eu/v1                                                                                
+kind: MultiClusterDeployment                                                                             
+metadata:                                                                                                
+  name: hello                                                                                            
+spec:                                                                                                    
+  numberOfLocations: 3                                                                                  
+  placementPolicy: worst_fit                                                                             
+  selector:                                                                                              
+    matchLabels:                                                                                         
+      app: hello                                                                                         
+      tier: backend                                                                                      
+      track: stable                                                                                      
+  replicas: 2                                                                                            
+  template:                                                                                              
+    metadata:                                                                                            
+      labels:                                                                                            
+        app: hello                                                                                       
+        tier: backend                                                                                    
+        track: stable                                                                                    
+    spec:                                                                                                
+      containers:                                                                                        
+        - name: hello                                                                                    
+          image: "gcr.io/google-samples/hello-go-gke:1.0"                                               
+          resources:                                                                                     
+            requests:                                                                                    
+              memory: 1024Mi                                                                             
+              cpu: 1000m                                                                                 
+            limits:                                                                                      
+              memory: 1024Mi                                                                             
+              cpu: 1000m                                                                                 
+          ports:                                                                                         
+            - name: http                                                                                 
+              containerPort: 80

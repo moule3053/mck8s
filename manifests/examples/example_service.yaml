@@ -1,0 +1,14 @@
+apiVersion: fogguru.eu/v1                                                                                
+kind: MultiClusterService                                                                                
+metadata:                                                                                                
+  name: hello                                                                                            
+  annotations:                                                                                           
+    io.cilium/global-service: "true"                                                                     
+spec:                                                                                                    
+  selector:                                                                                              
+    app: hello                                                                                           
+    tier: backend                                                                                        
+  ports:                                                                                                 
+  - protocol: TCP                                                                                        
+    port: 80                                                                                             
+    targetPort: http
