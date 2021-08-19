@@ -1,5 +1,5 @@
 FROM python:3.7
-RUN pip3 install kopf kubernetes pint PyYAML
+RUN pip3 install kopf kubernetes pint PyYAML pandas
 COPY helm /usr/local/bin/helm
 RUN chmod +x /usr/local/bin/helm
 COPY kubectl /usr/local/bin/kubectl
