@@ -11,6 +11,6 @@ RUN chmod + configure_cilium_1.sh
 RUN chmod + configure_cilium_2.sh
 COPY flannel.yaml calico.yaml cilium.yaml ./
 COPY prom-remote.yaml /prom-remote.yaml
-COPY utils.py.backup.2 /utils.py
+COPY utils.py /utils.py
 COPY cpca.py /cloud_provisioner.py
 CMD kopf run --standalone /cloud_provisioner.py
