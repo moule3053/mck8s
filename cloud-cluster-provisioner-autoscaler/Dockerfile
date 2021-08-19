@@ -6,7 +6,7 @@ COPY kubectl /usr/local/bin/kubectl
 RUN chmod +x /usr/local/bin/kubectl
 COPY kubefedctl /usr/local/bin/kubefedctl
 RUN chmod +x /usr/local/bin/kubefedctl
-COPY configure_cilium_1.sh configure_cilium_2.sh
+COPY configure_cilium_1.sh configure_cilium_2.sh ./
 RUN chmod + configure_cilium_1.sh
 RUN chmod + configure_cilium_2.sh
 COPY flannel.yaml calico.yaml cilium.yaml ./
