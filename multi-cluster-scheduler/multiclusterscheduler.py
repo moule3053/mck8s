@@ -620,7 +620,7 @@ def update_fn(spec, status, body, namespace, logger, patch, **kwargs):
                 #replicas = int(override_replicas_diff[cluster])
                 # is_eligible = checkClusterEligibility(cluster, app_cpu_request, app_memory_request, replicas)
                 # The maximum number of replicas the cluster can host
-                maximum_replicas = getAllocatableCapacity(cluster, fogapp_cpu_request, fogapp_memory_request, fogapp_name)
+                maximum_replicas = getAllocatableCapacity(cluster, fogapp_cpu_request, fogapp_memory_request, fogapp_name, fogpapp_namespace)
                 if maximum_replicas > replicas:
                     dict = {}
                     dict['name'] = cluster
@@ -672,7 +672,7 @@ def update_fn(spec, status, body, namespace, logger, patch, **kwargs):
                     for c in nearest_clusters:
                         # print("Overflow .................", overflow)
                         # if overflow > 0:
-                        maximum_replicas[c] = getAllocatableCapacity(c, fogapp_cpu_request, fogapp_memory_request, fogapp_name)
+                        maximum_replicas[c] = getAllocatableCapacity(c, fogapp_cpu_request, fogapp_memory_request, fogapp_name, fogpapp_namespace)
                         print("Maximum replicas .....", maximum_replicas)
 
             for cluster in temp_list:
@@ -788,7 +788,7 @@ def update_fn(spec, status, body, namespace, logger, patch, **kwargs):
         eligible_replicas.append(cluster['replicas'])
 
     # For the spec file
-    deployment_template = "{'apiVersion': 'apps/v1', 'kind': 'Deployment', 'metadata': {'name': '" + fogapp_name + "'}, 'spec': "
+    deployment_template = "{'apiVersion': 'apps/v1', 'kind': 'Deployment', 'metadata': {'name': '" + fogapp_name + "', 'namespace': '" + fogpapp_namespace + "'}, 'spec': "
     deployment_json = deployment_template + spec_text + "}"
     deployment_text = deployment_json.replace("'", "\"")
     deployment_body = json.loads(deployment_text)
@@ -819,7 +819,7 @@ def update_fn(spec, status, body, namespace, logger, patch, **kwargs):
             if cluster not in fogapp_current_locations:
                 deployment_body['spec']['replicas'] = eligible_replicas[i]
                 print("Creating fogapp on more clusters ...........")
-                createDeployment(cluster, deployment_body)
+                createDeployment(cluster, deployment_body, fogpapp_namespace)
             i += 1
 
     if len(eligible_clusters_sorted) > len(fogapp_current_locations):
@@ -832,7 +832,7 @@ def update_fn(spec, status, body, namespace, logger, patch, **kwargs):
             else:
                 deployment_body['spec']['replicas'] = eligible_replicas[i]
                 print("Creating fogapp on more clusters ...........")
-                createDeployment(cluster, deployment_body)
+                createDeployment(cluster, deployment_body, fogpapp_namespace)
             i += 1
 
     if len(eligible_clusters_sorted) < len(fogapp_current_locations):
