@@ -12,7 +12,9 @@ COPY metrics_server.yaml /metrics_server.yaml
 COPY cilium.yaml /cilium.yaml
 COPY cilium-etcd-external-nodeport.yaml /cilium-etcd-external-nodeport.yaml
 COPY configure_cilium_1.sh /configure_cilium_1.sh
+RUN chmod +x configure_cilium_1.sh
 COPY configure_cilium_2.sh /configure_cilium_2.sh
+RUN chmod +x configure_cilium_2.sh
 COPY clustermesh-tools /clustermesh-tools
 COPY utils.py /utils.py
 COPY cloud_provisioner.py /cloud_provisioner.py
