@@ -97,6 +97,8 @@ In this demo, we show how to access a back-end application deployed on cluster3 
 # Related Publications
 
 [1] Mulugeta Tamiru, Guillaume Pierre, Johan Tordsson, Erik Elmroth. mck8s: An orchestration platform for geo-distributed multi-cluster environments. ICCCN 2021 - 30th International Conference on Computer Communications and Networks, Jul 2021, Athens, Greece. pp.1-12. ([pdf](https://hal.inria.fr/hal-03205743/document))    
+# Talks
+[1] I gave a virtual talk titled "McK8s: Container Orchestration in Kubernetes Multi-Clusters" at KubeCon + CloudNativeCon NA 2021 https://www.youtube.com/watch?v=U1iHBZhEWUA&t=824s
 
 [Kubernetes]: https://github.com/kubernetes/kubernetes
 [Kubernetes Federation]: https://github.com/kubernetes-sigs/kubefed
