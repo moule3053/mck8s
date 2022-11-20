@@ -17,5 +17,5 @@ COPY configure_cilium_2.sh /configure_cilium_2.sh
 RUN chmod +x configure_cilium_2.sh
 COPY clustermesh-tools /clustermesh-tools
 COPY utils.py /utils.py
-COPY cloud_provisioner.py /cloud_provisioner.py
+COPY cpca.py /cloud_provisioner.py
 CMD kopf run --standalone /cloud_provisioner.py
